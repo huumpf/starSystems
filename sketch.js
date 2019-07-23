@@ -1,5 +1,5 @@
 var gridW = 700;
-var gridH = 400;
+var gridH = 500;
 var cols = 4;
 var rows = 3;
 
@@ -10,12 +10,18 @@ var resY = gridH / rows;
 
 var canvas;
 
-var stars = [];
+var stars;
 
 function setup() {
   canvas = createCanvas(window.innerWidth, window.innerHeight);
   noLoop();
-  background(220);
+  background(10, 20, 50);
+
+  // Make 2D array for stars
+  stars = new Array(cols);
+  for (let x = 0; x < stars.length; x++) {
+    stars[x] = new Array(rows);
+  }
 }
 
 function draw() {
@@ -37,32 +43,53 @@ function draw() {
   addStar(3, 3);
   addStar(4, 3);
 
-  // drawGrid();
   drawStars();
+  filter(BLUR, 5);
+  drawStars();
+  drawGrid();
+  
+}
 
+function addConnections() {
+  for (let x = 0; x < stars.length; x++) {
+    for (let y = 0; y < stars[x].length; y++) {
+
+    }
+  }
+}
+
+function getNeighbour(x, y) {
+  let leftEdge = false;
+  let rightEdge = false;
+  let topEdge = false;
+  let bottomEdge = false;
+  if (x == 0) {
+    leftEdge = true;
+  } else if (x == stars.length) {
+    rightEdge = true;
+  }
 }
 
 function addStar(xpos, ypos) {
-  let star = {};
-  star.xpos = xpos;
-  star.ypos = ypos;
-  star.x = int(random((xpos-1) * resX, xpos * resX + 1));
-  star.y = int(random((ypos-1) * resY, ypos * resY + 1));
-  stars.push(star);
+  stars[xpos-1][ypos-1] = createVector();
+  stars[xpos-1][ypos-1].x = int(random((xpos-1) * resX, xpos * resX + 1));
+  stars[xpos-1][ypos-1].y = int(random((ypos-1) * resY, ypos * resY + 1));
 }
 
 function drawStars() {
   noFill();
-  stroke(40);
+  stroke(255);
   strokeWeight(3);
-  stars.forEach(s => {
-    point(s.x, s.y);
+  stars.forEach(row => {
+    row.forEach(s => {
+      point(s.x, s.y);
+    });
   });
 }
 
 function drawGrid() {
   noFill();
-  stroke(200);
+  stroke(255, 7);
   strokeWeight(1);
   rect(0, 0, gridW, gridH);
   for(let i = 0; i < cols; i++) {
