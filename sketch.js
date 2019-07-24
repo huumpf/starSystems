@@ -47,7 +47,7 @@ function draw() {
   filter(BLUR, 5);
   drawStars();
   addConnections();
-  drawConnections();
+  // drawConnections();
   drawGrid();
   
 }
@@ -65,34 +65,31 @@ function drawConnections() {
 function addConnections() {
   for (let x = 0; x < stars.length; x++) {
     for (let y = 0; y < stars[x].length; y++) {
-      stars[x][y].connect = getNeighbour(x, y);
+      stars[x][y].connect = getConnections(stars[x][y]);
     }
   }
 }
 
-function getNeighbour(x, y) {
-  let connect;
-  let min = 0;
-  let max = 4;
-  let dir = floor(random(min, max));
-  if (dir == 0) {
-      connect = stars[x+1][y];
-  } else if (dir == 2) {
-    connect = stars[x][y+1];
-  } else if (dir == 3) {
-    connect = stars[abs(x-1)][y];
-  } else if (dir == 4) {
-    connect = stars[x][abs(y-1)];
+function getConnections(star) {
+  let neighbours = [];
+  for (let x = star.xpos-1; x <= star.xpos+1; x++) {
+    if (!stars[x]) {
+      continue
+    }
+    for (let y = star.ypos-1; y <= star.ypos+1; y++) {
+      if (!stars[x][y] || stars[x][y] === star || ) {
+        continue
+      }
+      neighbours.push(stars[x][y]);
+    }
   }
-  if (connect == undefined) {
-    return getNeighbour(x, y);
-  } else {
-    return connect;
-  }
+  console.log(neighbours);
 }
 
 function addStar(xpos, ypos) {
   stars[xpos-1][ypos-1] = {};
+  stars[xpos-1][ypos-1].xpos = xpos-1;
+  stars[xpos-1][ypos-1].ypos = ypos-1;
   stars[xpos-1][ypos-1].x = int(random((xpos-1) * resX, xpos * resX + 1));
   stars[xpos-1][ypos-1].y = int(random((ypos-1) * resY, ypos * resY + 1));
 }
