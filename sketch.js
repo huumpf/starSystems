@@ -3,6 +3,8 @@ var gridH = 500;
 var cols = 4;
 var rows = 3;
 
+var otherStars = 300;
+
 // =======================
 
 var resX = gridW / cols;
@@ -43,12 +45,14 @@ function draw() {
     star.connect();
   });
 
-  // drawStars();
-  // filter(BLUR, 5);
+  drawStars();
+  filter(BLUR, 5);
   drawStars();
   drawConnections();
-  drawGrid();
-  
+  // drawGrid();
+
+  translate(-width/2 + gridW/2, -height/2 + gridH/2);
+  drawOtherStars();
 }
 
 function drawConnections() {
@@ -86,5 +90,17 @@ function drawGrid() {
   }
   for(let i = 0; i < rows; i++) {
     line(0, i * resY, gridW, i * resY);
+  }
+}
+
+function drawOtherStars() {
+  for (let i = 0; i < otherStars; i++) {
+    let b = int(random(10, 70));
+    stroke(255, b);
+    let sw = int(random(1, 4));
+    strokeWeight(sw);
+    let x = int(random(0, width));
+    let y = int(random(0, height));
+    point(x, y);
   }
 }
