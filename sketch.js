@@ -11,6 +11,7 @@ var resY = gridH / rows;
 var canvas;
 
 var stars;
+var idCount = 0;
 
 function setup() {
   canvas = createCanvas(window.innerWidth, window.innerHeight);
@@ -47,7 +48,7 @@ function draw() {
   filter(BLUR, 5);
   drawStars();
   addConnections();
-  // drawConnections();
+  drawConnections();
   drawGrid();
   
 }
@@ -57,7 +58,7 @@ function drawConnections() {
     for (let y = 0; y < stars[x].length; y++) {
       stroke(255, 50);
       strokeWeight(1);
-      line(stars[x][y].x, stars[x][y].y, stars[x][y].connect.x, stars[x][y].connect.y, );
+      line(stars[x][y].x, stars[x][y].y, stars[x][y].connection.x, stars[x][y].connection.y, );
     }
   }
 }
@@ -65,33 +66,47 @@ function drawConnections() {
 function addConnections() {
   for (let x = 0; x < stars.length; x++) {
     for (let y = 0; y < stars[x].length; y++) {
-      stars[x][y].connect = getConnections(stars[x][y]);
+      stars[x][y].neighbourIDs = getNeighbourIDs(x, y);
+      conID = chooseRandomNeighbourID(stars[x][y]);
+      stars[x][y].connection = getStarByID(conID);
     }
   }
 }
 
-function getConnections(star) {
-  let neighbours = [];
-  for (let x = star.xpos-1; x <= star.xpos+1; x++) {
-    if (!stars[x]) {
-      continue
-    }
-    for (let y = star.ypos-1; y <= star.ypos+1; y++) {
-      if (!stars[x][y] || stars[x][y] === star || ) {
-        continue
-      }
-      neighbours.push(stars[x][y]);
-    }
-  }
-  console.log(neighbours);
+function chooseRandomNeighbourID(star) {
+  let id = star.neighbourIDs[Math.floor(random(0, star.neighbourIDs.length))];
+  return id;
+}
+
+function getNeighbourIDs(x, y) {
+  let neighbors = [];
+  try { neighbors.push(stars[x-1][y].id) } catch(err) {}
+  try { neighbors.push(stars[x+1][y].id) } catch(err) {}
+  try { neighbors.push(stars[x][y-1].id) } catch(err) {}
+  try { neighbors.push(stars[x][y+1].id) } catch(err) {}
+  neighbors = neighbors.filter(n => !!n);
+  return neighbors;
 }
 
 function addStar(xpos, ypos) {
   stars[xpos-1][ypos-1] = {};
+  stars[xpos-1][ypos-1].id = idCount;
+  idCount++;
   stars[xpos-1][ypos-1].xpos = xpos-1;
   stars[xpos-1][ypos-1].ypos = ypos-1;
   stars[xpos-1][ypos-1].x = int(random((xpos-1) * resX, xpos * resX + 1));
   stars[xpos-1][ypos-1].y = int(random((ypos-1) * resY, ypos * resY + 1));
+}
+
+function getStarByID(id) {
+  for (let x = 0; x < stars.length; x++) {
+    for (let y = 0; y < stars[x].length; y++) {
+      if (stars[x][y].id == id) {
+        return stars[x][y];
+        break;
+      }
+    }
+  }
 }
 
 function drawStars() {
