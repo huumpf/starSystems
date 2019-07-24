@@ -10,19 +10,13 @@ var resY = gridH / rows;
 
 var canvas;
 
-var stars;
+var stars = [];
 var idCount = 0;
 
 function setup() {
   canvas = createCanvas(window.innerWidth, window.innerHeight);
   noLoop();
   background(10, 20, 50);
-
-  // Make 2D array for stars
-  stars = new Array(cols);
-  for (let x = 0; x < stars.length; x++) {
-    stars[x] = new Array(rows);
-  }
 }
 
 function draw() {
@@ -44,65 +38,41 @@ function draw() {
   addStar(3, 3);
   addStar(4, 3);
 
-  stars.forEach(col => {
-    col.forEach(s => {
-      s.getNeighbours();
-    });
+  stars.forEach(star => {
+    star.getNeighbours();
+    star.connect();
   });
 
   // drawStars();
   // filter(BLUR, 5);
   drawStars();
-  addConnections();
   drawConnections();
   drawGrid();
   
 }
 
 function drawConnections() {
-  for (let x = 0; x < stars.length; x++) {
-    for (let y = 0; y < stars[x].length; y++) {
-      stroke(255, 50);
-      strokeWeight(1);
-      line(stars[x][y].x, stars[x][y].y, stars[x][y].connection.x, stars[x][y].connection.y, );
-    }
-  }
-}
-
-function addConnections() {
-  for (let x = 0; x < stars.length; x++) {
-    for (let y = 0; y < stars[x].length; y++) {
-      stars[x][y].neighbourIDs = getNeighbourIDs(x, y);
-      conID = chooseRandomNeighbourID(stars[x][y]);
-      stars[x][y].connection = getStarByID(conID);
-    }
-  }
-}
-
-function chooseRandomNeighbourID(star) {
-  let id = star.neighbourIDs[Math.floor(random(0, star.neighbourIDs.length))];
-  return id;
+  stars.forEach(star => {
+    star.drawConnections();
+  });
 }
 
 function addStar(xpos, ypos) {
-  stars[xpos-1][ypos-1] = new Star(xpos-1, ypos-1);
+  star = new Star(xpos-1, ypos-1);
+  stars.push(star);
 }
 
 function getStarByID(id) {
   let star;
-  stars.forEach(col => {
-    col.forEach(s => {
-      if (s.id === id) { star = s; }
-    });
+  stars.forEach(s => {
+    if (s.id === id) { star = s; }
   });
   return star;
 }
 
 function drawStars() {
-  stars.forEach(row => {
-    row.forEach(s => {
-      s.draw();
-    });
+  stars.forEach(s => {
+    s.draw();
   });
 }
 
